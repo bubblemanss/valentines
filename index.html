@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amanda, Be My Valentine 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #ff6f91;
+      --rose: #ff4d6d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fff0f5, #ffe6f0);
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      top: -10%;
+      font-size: 1.4rem;
+      animation: fall linear infinite;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(120vh) rotate(360deg); }
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      background: white;
+      padding: 3rem 3.5rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(255, 77, 109, 0.25);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--rose);
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .buttons {
+      position: relative;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      height: 80px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.9rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.25s ease, left 0.3s ease, top 0.3s ease;
+    }
+
+    #yesBtn { background: var(--pink); color: white; }
+    #noBtn { background: #eee; color: #555; }
+
+    .no-message {
+      margin-top: 1.5rem;
+      color: #c9184a;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+
+    .hidden { display: none; }
+
+    .heart { font-size: 3rem; animation: float 2s infinite ease-in-out; }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0); }
+    }
+
+    .photo { width: 100%; border-radius: 16px; margin: 1.5rem 0; }
+
+    audio { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+  <audio id="noSound"><source src="no.mp3" type="audio/mpeg"></audio>
+
+  <!-- QUESTION -->
+  <div class="card" id="questionCard">
+    <h1>Amanda,<br/>will you be my Valentine? 💐</h1>
+    <div class="buttons" id="buttonArea">
+      <button id="yesBtn">Yes 💖</button>
+      <button id="noBtn">No</button>
+    </div>
+    <div class="no-message" id="noMessage"></div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="card hidden" id="successCard">
+    <div class="heart">💗</div>
+    <h1>I knew you would say yes</h1>
+    <p>Turn up your speaker 😄</p>
+    <button id="continueBtn">One more thing… 💌</button>
+  </div>
+
+  <!-- SURPRISE -->
+  <div class="card hidden" id="surpriseCard">
+    <h1>I'm Yours 💕</h1>
+    <img src="photo.jpeg" class="photo" />
+    <p>
+      Amanda, you are my favorite person,<br/>
+      my wingspan rival, the Go-Eun to my Hyeon-Woo.<br/><br/>
+      Happy Valentine’s Day 💖
+    </p>
+    <button onclick="location.reload()">Replay 💞</button>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const noMessage = document.getElementById('noMessage');
+    const questionCard = document.getElementById('questionCard');
+    const successCard = document.getElementById('successCard');
+    const surpriseCard = document.getElementById('surpriseCard');
+    const continueBtn = document.getElementById('continueBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    const noSound = document.getElementById('noSound');
+    const buttonArea = document.getElementById('buttonArea');
+
+    const messages = [
+      'Are you sure?',
+      'Amanda pls 😭',
+      'This is emotional damage',
+      'Worst than ghosting me',
+      'kmn'
+    ];
+
+    let noClicks = 0;
+
+    noBtn.addEventListener('mouseenter', () => {
+      const x = Math.random() * 120 - 60;
+      const y = Math.random() * 40 - 20;
+      noBtn.style.transform = `translate(${x}px, ${y}px) scale(${Math.max(0.3, 1 - noClicks * 0.15)})`;
+    });
+
+    noBtn.addEventListener('click', () => {
+      noClicks++;
+      noSound.play().catch(() => {});
+
+      // If NO clicks exceed messages, yeet the button
+      if (noClicks > messages.length) {
+        noBtn.style.transition = 'transform 0.8s ease, opacity 0.8s ease';
+        noBtn.style.transform = 'translateY(120vh) rotate(720deg) scale(0.1)';
+        noBtn.style.opacity = '0';
+        noMessage.textContent = 'No has left the chat.';
+        return;
+      }
+
+      noMessage.textContent = messages[noClicks % messages.length];
+      yesBtn.style.transform = `scale(${1 + noClicks * 0.18}) translateX(${noClicks * 4}px)`;
+
+      if (1 - noClicks * 0.15 <= 0.35) {
+        noMessage.textContent = '🪦 death by rejection';
+      }
+    });
+
+    yesBtn.addEventListener('click', () => {
+      bgMusic.play().catch(() => {});
+
+      // Confetti hearts burst
+      for (let i = 0; i < 30; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'petal';
+        heart.textContent = '💖';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.fontSize = '1.6rem';
+        heart.style.animationDuration = 3 + Math.random() * 3 + 's';
+        document.body.appendChild(heart);
+      }
+
+      questionCard.classList.add('hidden');
+      successCard.classList.remove('hidden');
+    });
+
+    continueBtn.addEventListener('click', () => {
+      successCard.classList.add('hidden');
+      surpriseCard.classList.remove('hidden');
+      document.querySelectorAll('.petal').forEach(p => p.textContent = '💖');
+    });
+
+    const petals = ['🌸','🌷','🌹'];
+    for (let i = 0; i < 24; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = petals[Math.floor(Math.random() * petals.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = 8 + Math.random() * 6 + 's';
+      p.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(p);
+    }
+  </script>
+</body>
+</html>
+
